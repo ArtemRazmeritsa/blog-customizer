@@ -9,7 +9,6 @@ import clsx from 'clsx';
 import styles from './ArticleParamsForm.module.scss';
 import {
 	fontFamilyOptions,
-	OptionType,
 	fontSizeOptions,
 	fontColors,
 	backgroundColors,
@@ -41,7 +40,18 @@ export const ArticleParamsForm: React.FC<ArticleFormProps> = ({ onChange }) => {
 	);
 	const sidebarRef = useRef<HTMLDivElement>(null);
 
-	const handleApply = () => {
+	const handleReset = () => {
+		onChange({
+			fontFamilyOption: defaultArticleState.fontFamilyOption,
+			fontSizeOption: defaultArticleState.fontSizeOption,
+			fontColor: defaultArticleState.fontColor,
+			backgroundColor: defaultArticleState.backgroundColor,
+			contentWidth: defaultArticleState.contentWidth,
+		});
+	};
+
+	const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
 		onChange({
 			fontFamilyOption: selectedFont,
 			fontSizeOption: selectedFontSize,
@@ -49,18 +59,6 @@ export const ArticleParamsForm: React.FC<ArticleFormProps> = ({ onChange }) => {
 			backgroundColor: selectedBgColor,
 			contentWidth: selectedContentWidth,
 		});
-	};
-	const handleReset = () => {
-		setSelectedFont(defaultArticleState.fontFamilyOption);
-		setSelectedFontSize(defaultArticleState.fontSizeOption);
-		setSelectedFontColor(defaultArticleState.fontColor);
-		setSelectedBgColor(defaultArticleState.backgroundColor);
-		setSelectedContentWidth(defaultArticleState.contentWidth);
-	};
-
-	const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-		handleApply();
 	};
 
 	const toggleIsOpen = () => {
@@ -74,26 +72,6 @@ export const ArticleParamsForm: React.FC<ArticleFormProps> = ({ onChange }) => {
 		) {
 			setIsOpen(false);
 		}
-	};
-
-	const handleFontChange = (selected: OptionType) => {
-		setSelectedFont(selected);
-	};
-
-	const handleFontSizeChange = (selected: OptionType) => {
-		setSelectedFontSize(selected);
-	};
-
-	const handleFontColorChange = (selected: OptionType) => {
-		setSelectedFontColor(selected);
-	};
-
-	const handleBgColorChange = (selected: OptionType) => {
-		setSelectedBgColor(selected);
-	};
-
-	const handleContentWidthChange = (selected: OptionType) => {
-		setSelectedContentWidth(selected);
 	};
 
 	useEffect(() => {
@@ -122,41 +100,48 @@ export const ArticleParamsForm: React.FC<ArticleFormProps> = ({ onChange }) => {
 						options={fontFamilyOptions}
 						selected={selectedFont}
 						title={'Шрифт'}
-						onChange={handleFontChange}></Select>
+						onChange={setSelectedFont}></Select>
 					<RadioGroup
 						options={fontSizeOptions}
 						selected={selectedFontSize}
 						name={'fontSize'}
 						title={'Размер шрифта'}
-						onChange={handleFontSizeChange}></RadioGroup>
+						onChange={setSelectedFontSize}></RadioGroup>
 					<Select
 						options={fontColors}
 						selected={selectedFontColor}
 						title={'Цвет шрифта'}
-						onChange={handleFontColorChange}></Select>
+						onChange={setSelectedFontColor}></Select>
 					<Separator />
 					<Select
 						options={backgroundColors}
 						selected={selectedBgColor}
 						title={'Цвет фона'}
-						onChange={handleBgColorChange}></Select>
+						onChange={setSelectedBgColor}></Select>
 					<Select
 						options={contentWidthArr}
 						selected={selectedContentWidth}
 						title={'Ширина контента'}
-						onChange={handleContentWidthChange}></Select>
+						onChange={setSelectedContentWidth}></Select>
 					<div className={styles.bottomContainer}>
 						<Button
 							title='Сбросить'
 							htmlType='reset'
 							type='clear'
-							onClick={handleReset}
+							onClick={() => {
+								handleReset();
+								setSelectedFont(defaultArticleState.fontFamilyOption);
+								setSelectedFontSize(defaultArticleState.fontSizeOption);
+								setSelectedFontColor(defaultArticleState.fontColor);
+								setSelectedBgColor(defaultArticleState.backgroundColor);
+								setSelectedContentWidth(defaultArticleState.contentWidth);
+							}}
 						/>
 						<Button
 							title='Применить'
 							htmlType='submit'
 							type='apply'
-							onClick={handleApply}
+							onClick={() => handleFormSubmit}
 						/>
 					</div>
 				</form>
